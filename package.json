@@ -2,19 +2,23 @@
 	"dependencies": {
 		"electron-updater": "^6.8.9",
 		"systeminformation": "^5.31.7",
-		"yt-dlp-wrap-plus": "^2.4.3"
+		"yt-dlp-wrap-plus": "^2.5.0"
 	},
 	"name": "ytdownloader",
-	"version": "3.21.1",
+	"version": "4.0.2",
 	"main": "main.js",
 	"scripts": {
 		"start": "electron .",
+		"test": "playwright test",
 		"dist": "electron-builder",
+		"postinstall": "node patch-snap.js",
 		"debug": "electron --inspect=5858 .",
 		"windows": "electron-builder -w",
+		"appx-test": "powershell -ExecutionPolicy Bypass -File ./test-appx.ps1",
 		"linux": "electron-builder -l",
 		"mac": "electron-builder -m",
 		"gh-windows": "electron-builder -w --publish=always",
+		"gh-windows-arm64": "electron-builder -w --arm64 -c.win.artifactName=\"${productName}_Win_arm64.${ext}\" --publish=never",
 		"gh-linux": "electron-builder -l --publish=always",
 		"gh-mac": "electron-builder -m --publish=always"
 	},
@@ -31,17 +35,20 @@
 	"license": "GPL-3.0",
 	"description": "Download videos and audios from YouTube and many other sites",
 	"devDependencies": {
+		"@playwright/test": "^1.45.0",
 		"electron": "^30.5.1",
-		"electron-builder": "^26.15.3",
+		"electron-builder": "^26.15.7",
 		"typescript": "^5.3.3"
 	},
 	"build": {
 		"productName": "YTDownloader",
 		"appId": "io.github.aandrew_me.ytdn",
+		"copyright": "Copyright © Andrew",
 		"artifactName": "${productName}.${ext}",
 		"files": [
 			"./resources/**/*",
 			"main.js",
+			"preload.js",
 			"./html/**/*",
 			"./resources/**/*",
 			"./public/**/*",
@@ -84,6 +91,9 @@
 			"buildResources": "resources",
 			"output": "release"
 		},
+		"toolsets": {
+			"appimage": "1.0.3"
+		},
 		"linux": {
 			"target": [
 				"Appimage",
@@ -111,7 +121,7 @@
 			"allowToChangeInstallationDirectory": true,
 			"oneClick": false,
 			"deleteAppDataOnUninstall": true,
-			"license": "./LICENSE"
+			"license": "./LICENSE.rtf"
 		},
 		"msi": {
 			"oneClick": true,
@@ -124,7 +134,8 @@
 			"publisherDisplayName": "aandrew-me",
 			"identityName": "aandrew-me.YTDownloaderPlus",
 			"applicationId": "YTDownloaderPlus",
-			"displayName": "YTDownloader Plus"
+			"displayName": "YTDownloader Plus",
+			"backgroundColor": "transparent"
 		}
 	}
 }
